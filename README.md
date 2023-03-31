@@ -139,8 +139,7 @@ Once you have finished creating your four migrations, run `rails
 db:migrate`. The resulting __db/schema.rb__ file should look like this:
 
 ```rb
-ActiveRecord::Schema.define(version: 2021_10_07_223542) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_08_11_204557) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -150,23 +149,23 @@ ActiveRecord::Schema.define(version: 2021_10_07_223542) do
     t.integer "price", null: false
     t.integer "happiness", null: false
     t.string "image_url", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["pokemon_id"], name: "index_items_on_pokemon_id"
   end
 
   create_table "moves", force: :cascade do |t|
     t.string "name", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["name"], name: "index_moves_on_name", unique: true
   end
 
   create_table "poke_moves", force: :cascade do |t|
     t.bigint "pokemon_id", null: false
     t.bigint "move_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["move_id"], name: "index_poke_moves_on_move_id"
     t.index ["pokemon_id", "move_id"], name: "index_poke_moves_on_pokemon_id_and_move_id", unique: true
   end
@@ -179,8 +178,8 @@ ActiveRecord::Schema.define(version: 2021_10_07_223542) do
     t.string "poke_type", null: false
     t.string "image_url", null: false
     t.boolean "captured", default: false, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["name"], name: "index_pokemons_on_name", unique: true
     t.index ["number"], name: "index_pokemons_on_number", unique: true
   end
@@ -325,7 +324,7 @@ Next test your associations. Run `Pokemon.first.moves`. It should produce the
 3 `Item`s, all with a `pokemon_id` of 1. If either of these commands produces
 different results, check the `belongs_to` and `has_many` associations in your
 model files. Finally, test that `Move.first.pokemon` returns the `Pokemon` with
-`id`s 1, 2, and 3.
+`id`s 1, 2, and 3 (among others!).
 
 Now test your validations. Type `p = Pokemon.new(captured: nil)` to create a
 `Pokemon` where every value is nil, then try `p.save!`. (Be sure to add the `!`
