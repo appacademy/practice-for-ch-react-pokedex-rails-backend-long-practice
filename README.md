@@ -308,7 +308,7 @@ additional `has_many :moves` in the `Pokemon` model that goes through
 `poke_moves`. Add the corresponding `has_many :pokemon` in `Move`, too. (For
 `has_many :through` associations, see [here][has-many-through].)
 
-### Seed and Test
+### Seed and test
 
 Download the __seeds.rb__ file available from the repo linked to the `Download
 Project` button at the bottom of this page. Replace __db/seeds.rb__ in your

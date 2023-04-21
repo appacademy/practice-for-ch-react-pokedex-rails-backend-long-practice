@@ -1,12 +1,13 @@
 # Pokedex Backend, Phase 2: Routes, Controllers, And Jbuilder
 
 In this phase, you will set up your routes enabling your new Rails API backend
-to communicate with the React frontend you built in Part I.
+to communicate with the React frontend you built in Part 1 (i.e., Pokedex
+Thunk).
 
-### Frontend
+## Frontend
 
-For the frontend, grab the full solution to Part I from yesterday's EOD email
-and unzip it into a new directory outside of your Rails pokedex backend
+For the frontend, grab the full solution to Pokedex Thunk from yesterday's EOD
+email and unzip it into a new directory outside of your Rails pokedex backend
 directory. `cd` into that directory and run `npm install && npm start`. Your
 frontend should be up and running!
 
@@ -15,19 +16,19 @@ everything is running correctly, [`localhost:3000`] just shows a blank page with
 a `+` button. That's because it's not getting any information from your backend.
 It's time to fix that.
 
-To know what your Rails server needs to do, look at the [README from the Part I
-backend][express-backend]. That README identifies the API that your frontend is
-expecting: which routes to call, how they change the database, and what they
-return.
+To know what your Rails server needs to do, look at the [README from the Pokedex
+Thunk backend][express-backend]. That README identifies the API that your
+frontend is expecting: which routes to call, how they change the database, and
+what they return.
 
-The frontend does not care how that API gets implemented under the hood.
-Part I used an Express server to receive requests, interact with the database,
+The frontend does not care how that API gets implemented under the hood. Pokedex
+Thunk used an Express server to receive requests, interact with the database,
 and send up the information; you are using a Rails server. You just need to make
 sure that the API remains the same. To put it another way: you don't want to
 have to change anything in your frontend for it to work with your new Rails
 backend.
 
-### Routes
+## Routes
 
 Start by identifying the nine routes in the README that your backend will
 require. As you think about how to define these routes, the first thing to note
@@ -84,7 +85,7 @@ api_pokemon_index GET    /api/pokemon(.:format)                   api/pokemon#in
 
 Once your nine routes (plus 2 PATCH routes) match, move on to the controllers!
 
-### Controllers
+## Controllers
 
 Now that the routes are ready, you need to create two controllers, one for
 `Pokemon` and one for `Items`. Set up your `Pokemon` controller with
@@ -98,14 +99,14 @@ will create an __api__ directory inside __app/controllers/__ and add a
 __pokemon_controller.rb__ file to it. Go ahead and create your `Items`
 controller too.
 
-#### Pokemon `types`, `index`, and `show`
+### Pokemon `types`, `index`, and `show`
 
 Open __pokemon_controller.rb__. It should contain a basic skeleton for the
 `Api::PokemonController` class. **Note that the namespace (`Api::`) precedes the
 basic class name.**
 
 Begin by defining a custom `types` action inside your `Api::PokemonController`
-class. Look at the README from Part I again to see what this route should
+class. Look at the README from Pokedex Thunk again to see what this route should
 return. Since this action returns static data, there is no need for any Jbuilder
 views. Simply grab the data, put it into the expected format, and return it as
 JSON directly from the controller using this format:
@@ -161,7 +162,7 @@ appropriate error message and a status code of `:not_found` (i.e., 404) instead.
 To complete the `index` and `show` requests, you now need to define views that
 will return the requested data in JSON format. It's time for Jbuilder!
 
-### Jbuilder Views
+## Jbuilder views
 
 Because __config/routes.rb__ specifies that the `api` namespace defaults to
 JSON-formatted responses (see above), Rails will look for an
@@ -175,16 +176,16 @@ file structure should now look like this:
 
 ```text
 app
-├── views
-    ├── api
+└── views
+    └── api
         ├── items
-        ├── pokemon
+        └── pokemon
             ├── index.json.jbuilder
-            ├── show.json.jbuilder
+            └── show.json.jbuilder
 ```
 
-Look at the README for the Part I backend again to see what the `index` route
-should return. Once you find the return value, copy it into the top of
+Look at the README for the Pokedex Thunk backend again to see what the `index`
+route should return. Once you find the return value, copy it into the top of
 __index.json.jbuilder__ and comment it out so you have an easily accessible
 record of what you need to return.
 
@@ -243,13 +244,13 @@ at the `State` of your `pokemon` in the DevTools `Redux` tab, you should see the
 `image_url` key magically transformed into `imageUrl`. The images should now
 appear as well. Great!
 
-As you may remember, the backend in Part I only served up images for captured
-pokemon; pokemon who were still in the wild had only a giant `?` for an image.
-Jbuilder makes it easy to add this feature. Instead of automatically extracting
-`image_url` with the other attributes, first check to see if the Pokemon is
-captured. If it is, go ahead and return `image_url`. If not, have the template
-return an `image_url` of `"/images/unknown.png"`. (You can use standard Ruby
-`if`-clauses inside Jbuilder.)
+As you may remember, the backend in Pokedex Thunk only served up images for
+captured pokemon; pokemon who were still in the wild had only a giant `?` for an
+image. Jbuilder makes it easy to add this feature. Instead of automatically
+extracting `image_url` with the other attributes, first check to see if the
+Pokemon is captured. If it is, go ahead and return `image_url`. If not, have the
+template return an `image_url` of `"/images/unknown.png"`. (You can use standard
+Ruby `if`-clauses inside Jbuilder.)
 
 Next, open __app/views/api/pokemon/show.json.jbuilder__ and copy in a
 commented-out version of the API return value you need to create. You don't need
@@ -277,7 +278,7 @@ to your browser and click on one of the Pokemon. It should now pull up all the
 basic details for that Pokemon. The items will still be blank, however. Fixing
 that issue is your next task.
 
-### Items
+## Items
 
 You have defined the following routes for `Items`:
 
@@ -471,7 +472,7 @@ As with `update`, render the `show` view on successful creation and
 `@item.errors.messages` with an appropriate error `status` on failure. Once you
 have finished, test your action from the frontend to make sure it works.
 
-### Pokemon `create` and `update`
+## Pokemon `create` and `update`
 
 Finish the project by filling out `create` and `update` for
 `Api::PokemonController`. Try to do it without looking at your items controller,
