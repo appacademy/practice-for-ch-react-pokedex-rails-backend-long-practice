@@ -1,32 +1,22 @@
 # Pokedex Backend, Phase 2: Routes, Controllers, And Jbuilder
 
-In this phase, you will set up your routes enabling your new Rails API backend
-to communicate with the React frontend you built in Part 1 (i.e., Pokedex
-Thunk).
+In this phase, you will set up the routes that will enable your new Rails API
+backend to communicate with the React frontend you will build in Part 2 (i.e.,
+Pokedex Thunk).
 
-## Frontend
+## The API
 
-For the frontend, grab the full solution to Pokedex Thunk from yesterday's EOD
-email and unzip it into a new directory outside of your Rails pokedex backend
-directory. `cd` into that directory and run `npm install && npm start`. Your
-frontend should be up and running!
+To know what your Rails server needs to do, look at the __Pokedex-API.md__ file
+in the repo linked to the `Download Project` button below. Assume that this
+document represents an established API. It tells a frontend which routes to
+call, how those routes change the database, and what those routes return.
 
-The frontend probably appears somewhat underwhelming at this point: if
-everything is running correctly, [`localhost:3000`] just shows a blank page with
-a `+` button. That's because it's not getting any information from your backend.
-It's time to fix that.
-
-To know what your Rails server needs to do, look at the [README from the Pokedex
-Thunk backend][express-backend]. That README identifies the API that your
-frontend is expecting: which routes to call, how they change the database, and
-what they return.
-
-The frontend does not care how that API gets implemented under the hood. Pokedex
-Thunk used an Express server to receive requests, interact with the database,
-and send up the information; you are using a Rails server. You just need to make
-sure that the API remains the same. To put it another way: you don't want to
-have to change anything in your frontend for it to work with your new Rails
-backend.
+A frontend does not care how that API gets implemented under the hood. You are
+building a Rails server, but you could just as easily implement the API using an
+Express server to receive requests, interact with the database, and send up the
+information. You just need to make sure that the API remains the same. To put it
+another way: you don't want a frontend app that has been using this API to have
+to change anything for it to work with your new Rails backend.
 
 ## Routes
 
@@ -65,8 +55,8 @@ required to use the `:shallow` option here, this would be a good opportunity to
 see how it works.)
 
 When you have finished defining the routes, test your work by running `rails
-routes`. You should see the following routes matching those specified in the
-README:
+routes`. You should see the following routes matching those specified in
+__Pokedex-API.md__:
 
 ```sh
            Prefix Verb   URI Pattern                              Controller#Action
@@ -115,9 +105,8 @@ JSON directly from the controller using this format:
 render json: <data_to_return>
 ```
 
-That's it! To test your action, start up your server. Remember from yesterday
-that the frontend will proxy requests to the backend on port 5000, so your Rails
-server needs to listen on port 5000, not the default port 3000. You could
+That's it! To test your action, start up your server. Have your Rails
+server listen on port 5000 rather than the default port 3000. You could
 specify the port on the command line when starting the Rails server with the
 `-p` flag, like this:
 
@@ -141,22 +130,19 @@ port ENV.fetch("PORT") { 5000 }
 # ...
 ```
 
-Voila! No more need for `-p 5000` on the command line.
+Voilà! No more need for `-p 5000` on the command line.
 
-After starting your server (`rails s`), go into the directory that houses your
-frontend. If it is not already running, start the frontend with `npm start`. In
-your browser, navigate to [`localhost:3000`]; it should display the blank page
-with the `+` button. Click the `+` to pull up the Create Pokemon form. If your
-`types` action is working correctly, the dropdown menu at the bottom of the form
-should be filled with the different Pokemon types.
+After starting your server (`rails s`), pull up Postman and send a `GET` request
+to `localhost:5000/api/pokemon/types`. Make sure that the response matches the
+form specified by __Pokemon-API__.
 
-Once your types display correctly in the form, go back to
-__pokemon_controller.rb__ and add `index` and `show` actions to your
+Once you have verified that your backend is correctly returning the types, go
+back to __pokemon_controller.rb__ and add `index` and `show` actions to your
 `Api::PokemonController` class. Remember that all these actions need to do is
 find the requested Pokemon--all Pokemon in the case of `index`, the specified
 single Pokemon in the case of `show`--save it in an instance variable, and then
 render the appropriate view. (How do you know which Pokemon you want to find in
-`show`? Hint: think about your routes.) If something goes wrong, render an
+`show`? **Hint:** Think about your routes.) If something goes wrong, render an
 appropriate error message and a status code of `:not_found` (i.e., 404) instead.
 
 To complete the `index` and `show` requests, you now need to define views that
@@ -184,10 +170,10 @@ app
             └── show.json.jbuilder
 ```
 
-Look at the README for the Pokedex Thunk backend again to see what the `index`
-route should return. Once you find the return value, copy it into the top of
-__index.json.jbuilder__ and comment it out so you have an easily accessible
-record of what you need to return.
+Look at the API doc again to see what the `index` route should return. Once you
+find the return value, copy it into the top of __index.json.jbuilder__ and
+comment it out so you have an easily accessible record of what you need to
+return.
 
 The API shows that it should return an array of abbreviated Pokemon objects.
 This is exactly what the `array!` command does in Jbuilder: create a top-level
@@ -198,34 +184,38 @@ Pokemon in `@pokemon`:
 json.array! @pokemon, :id, :number, :name, :image_url, :captured
 ```
 
-Copy that line into __index.json.jbuilder__ and refresh your Pokedex in the
-browser to initiate a call to `index`. You should now see the names of the
-various Pokemon populate your app, but without any associated images. What
-happened to the pictures?
+Copy that line into __index.json.jbuilder__ and send a Postman request for the
+Pokemon index. (Look at the API description if you forget how to do this.) You
+should see the names and characteristics of the various Pokemon in the response.
+A frontend receiving this response likely would not be able to show any
+associated images. Can you figure out why?
 
 You have several tools to help you see and debug your Jbuilder results:
 
+* Postman
 * the server console (to see which templates are being called and when)
-* the logger in the frontend console
-* the Redux DevTools
 * `debugger`s in your Jbuilder code
+
+(Once you build your frontend, you will also have access to the logger in the
+frontend console and Redux DevTools.)
 
 Some tools are better at catching certain errors than others, and you will
 probably end up using all of these options at some point, so try to keep them
 all in mind when you run into trouble.
 
-For now, go to the `Redux` tab in your browser's DevTools and click to view the
-`State`. Inspect the first `pokemon` and compare it to the commented-out return
-value at the top of your Jbuilder file. Before continuing, find the key that is
-different. The `pokemon` in your Redux `State` probably looks similar to this:
+For now, go to the response in Postman. Inspect the first `pokemon` and compare
+it to the commented-out return value at the top of your Jbuilder file. Before
+continuing, find the key that is different. The `pokemon` in your Postman
+response probably looks similar to this:
 
 ```ruby
-1:
-  id: 1
-  number: 1
-  name: "Bulbasaur"
-  image_url: "1.svg"
-  captured: true
+{
+    "id": 1,
+    "number": 1,
+    "name": "Bulbasaur",
+    "image_url": "/images/pokemon_snaps/1.svg"
+    "captured": true,
+}
 ```
 
 Did you find the incorrect key? According to the API, the `image_url` key should
@@ -239,18 +229,18 @@ Jbuilder.key_format camelize: :lower
 ```
 
 You've changed an environment setting, so you will need to restart your Rails
-server for the change to take effect. Now when you refresh your browser and look
-at the `State` of your `pokemon` in the DevTools `Redux` tab, you should see the
-`image_url` key magically transformed into `imageUrl`. The images should now
-appear as well. Great!
+server for the change to take effect. Now when you try your Postman request
+again, you should see the `image_url` key magically transformed into `imageUrl`.
+Great!
 
-As you may remember, the backend in Pokedex Thunk only served up images for
-captured pokemon; pokemon who were still in the wild had only a giant `?` for an
-image. Jbuilder makes it easy to add this feature. Instead of automatically
-extracting `image_url` with the other attributes, first check to see if the
-Pokemon is captured. If it is, go ahead and return `image_url`. If not, have the
-template return an `image_url` of `"/images/unknown.png"`. (You can use standard
-Ruby `if`-clauses inside Jbuilder.)
+The API provides a bit more information about this route, however. According to
+__Pokedex-API.md__, the index route should serve up images only for captured
+pokemon; pokemon still in the wild should have only a giant `?` for an image.
+Jbuilder makes it easy to add this feature. Instead of automatically extracting
+`image_url` with the other attributes, first check to see if the Pokemon is
+captured. If it is, go ahead and return `image_url`. If not, have the template
+return an `image_url` of `"/images/unknown.png"`. (You can use standard Ruby
+`if`-clauses inside Jbuilder.)
 
 Next, open __app/views/api/pokemon/show.json.jbuilder__ and copy in a
 commented-out version of the API return value you need to create. You don't need
@@ -259,7 +249,7 @@ want included in the Jbuilder object. Don't forget to return the `unknown` image
 if the Pokemon is not captured!
 
 Remember, too, that your Rails database does not have columns named `createdAt`
-and `updatedAt`. How can you access that information? (Hint: think about
+and `updatedAt`. How can you access that information? (**Hint:** Think about
 `imageUrl`, and be glad that you made a programmatic change!) Also, note that
 your previous programmatic change will **not** help you with `poke_type`; you
 will need to address that attribute by explicitly setting the expected key and
@@ -274,9 +264,9 @@ Jbuilder and that you can always refer to the [Jbuilder docs][jbuilder] for help
 if you get stuck.
 
 That's it! When you have finished setting up your Jbuilder `show` file, go back
-to your browser and click on one of the Pokemon. It should now pull up all the
-basic details for that Pokemon. The items will still be blank, however. Fixing
-that issue is your next task.
+to Postman and test it out. The response should now include all the basic
+details for that Pokemon. If it does, yea, you're ready to move on to `Items`!
+If it does not, go back and debug.
 
 ## Items
 
@@ -303,15 +293,14 @@ Begin by implementing the controller action and Jbuilder view for `index`.
 Their basic format will be very similar to the `Pokemon` `index` controller
 action and view that you just wrote. If you get stuck, you can refer to the
 `Pokemon` versions for help, but try to write these actions and views without
-looking back. Once you have them implemented, your Pokemon show page should show
-the Pokemon's items with their images.
+looking back. Once you have them implemented, test the API with Postman.
 
 Next, implement `destroy`. All this action needs to do is call `Item.destroy`
 with the `id` of the item to delete. As the API notes, you should return a JSON
 object with the `id` of the deleted item. No need for Jbuilder here! Just
 `render` the `json` return value directly. (If you don't remember how to do
 this, look at `Api::PokemonController#types`.) Test your `destroy` action from
-the browser to make sure that it works.
+Postman to make sure that it works.
 
 For `create` and `update`, set up strong params by defining a private
 `item_params` method in `Api::ItemsController`
@@ -324,14 +313,16 @@ updated item's `show` view on success. If the update fails, render
 
 Now you need to write the Jbuilder `show` view in
 __app/views/api/items/show.json.jbuilder__. Note that the return value for
-`show` is the same as it is for an individual item in `index`. Keep your code
-DRY by writing a partial! Create a new file,
-__app/views/api/items/_item.json.jbuilder__, and copy in the code for a single
-item from the `index` Jbuilder file. To call this partial, just invoke
-`json.partial!` followed by the partial's path within the __views__ folder (omit
-the underscore before `_item`). A second argument is a hash specifying the
-values of any arguments to be passed (here, `item`). For instance, replace the
-copied code in __index.json.jbuilder__ with the following partial call:
+`show` is the same as it is for an individual item in `index`. Let's keep your
+code DRY by writing a partial!
+
+Create a new file, __app/views/api/items/_item.json.jbuilder__, and copy in the
+code for a single item from the `index` Jbuilder file. To call this partial,
+just invoke `json.partial!` followed by the partial's path within the __views__
+folder (omit the underscore before `_item`). A second argument is a hash
+specifying the values of any arguments to be passed (here, `item`). For
+instance, replace the copied code in __index.json.jbuilder__ with the following
+partial call:
 
 ```rb
 json.partial! 'api/items/item', item: item
@@ -340,29 +331,11 @@ json.partial! 'api/items/item', item: item
 That one line--appropriately modified--is all you need to include in
 __show.json.jbuilder__.
 
-Test your work by editing a Pokemon's item in your browser. You should easily be
-able to verify that your `update` action correctly updates an item's `name`,
-`happiness`, and `price`. Your frontend, however, currently has no way to update
-an item's image file or associated Pokemon. You want to make sure this
-functionality works since the API says that it does and other frontend apps
-might implement it. To test these additional cases, add the following two lines
-to the thunk action creator `updateItem` in your frontend's
-__src/store/items.js__ file:
-
-```js
-// src/store/item.js
-export const updateItem = data => async dispatch => {
-  data.imageUrl = "pokemon_berry.svg";
-  data.pokemonId = 1;
-  // ...
-```
-
-In your browser, select a Pokemon other than the first and update an item that
-does not have berries for its image. If everything is working correctly, when
-you submit the update, the two lines you added to `updateItem` should change the
-image to `pokemon_berry` and move the item to the Pokemon with an `id` of 1. As
-things currently stand, however, that will not happen: edits you made on the
-form will go through, but the image and associated Pokemon will stay the same.
+Test your work by editing an item in Postman. First verify that your `update`
+action correctly updates `name`, `happiness`, and `price` by sending updated
+values in the body; that should be relatively straightforward. Next test that
+you can update an item's image file and associated Pokemon. Here you will likely
+run into difficulty: the image and associated Pokemon will not change.
 
 To find out what is wrong, return to __app/controllers/api/items_controller.rb__
 and insert a `debugger` inside `item_params`. Try submitting your previous edit
@@ -376,9 +349,9 @@ keys):
 
 As you hopefully noticed, the `id`, `name`, `price`, and `happiness` parameters
 all appear both 1) at the top level and 2) nested under `items`. Now look back
-at `updateItem` in your frontend's __src/store/items.js__ file. Where does your
-request nest **anything** under `items`? It doesn't. So where does the `item`
-parameter with its hash of nested attributes come from???
+at your Postman request. Where does your request nest **anything** under
+`items`? It doesn't. So where does the `item` parameter with its hash of nested
+attributes come from???
 
 The answer, of course, is Rails magic. By default, when Rails receives a request
 in **JSON format**, it figures out the likely model from the controller name and
@@ -454,11 +427,8 @@ duplicates them under the `item` key. Then, before `update` runs, Rails runs
 `snake_case_params`, which converts all the parameters--even those that are
 nested!--to snake_case. Finally, `update` runs and calls `item_params`.
 
-Allow the request to finish processing. The edited item should now appear under
-the first Pokemon (Bulbasaur) and have an associated berry image. Success!
-
-(Don't forget to remove the two `data` lines that you added to your frontend's
-`updateItem`--__src/store/items.js__--for testing purposes.)
+Allow the request to finish processing. The response should now show a correctly
+edited item. Success!
 
 Now finish your item controller by writing the `create` action. According to
 the API, an image_url will be supplied if `image_url` is not provided.
@@ -470,7 +440,7 @@ Accordingly, add this line **after** you have created the new `Item`:
 
 As with `update`, render the `show` view on successful creation and
 `@item.errors.messages` with an appropriate error `status` on failure. Once you
-have finished, test your action from the frontend to make sure it works.
+have finished, test your action from Postman to make sure it works.
 
 ## Pokemon `create` and `update`
 
@@ -503,7 +473,7 @@ corollary: you do not need to include `moves` as a permitted attribute in
 things to keep in mind as you think about how to save/update the Pokemon's
 `moves`:
 
-* You can access the `moves` passed from the frontend through `params`.
+* You can access the `moves` passed from Postman / a frontend through `params`.
 * You can use assignment (`=`) with an association and Rails will automatically
   perform the necessary adjustments--both additions and deletions--on the
   intervening join table.
@@ -517,27 +487,22 @@ You've already written a Jbuilder `show` template for a Pokemon, so nothing more
 is required to render a newly created/updated Pokemon. Now that you know how to
 do partials in Jbuilder, however, go ahead and refactor your code so that the
 elements common to the `index` and `show` templates reside in a partial. Once
-you've finished, test your work in your browser to make sure everything still
-renders correctly.
+you've finished, test your work in Postman to make sure everything still renders
+correctly.
 
 The only thing left to do is render the errors and an `unprocessable_entity`
 status if `create` or `update` fails. You have relative freedom on the error
-format for `update` because the frontend doesn't do anything with those errors.
-The Create Pokemon form, in contrast, is set up to render error messages, so you
-need to match the expected format. (Usually this process goes the other way,
-with a frontend developer trying to interpret the format produced by the
-backend, but the practice is good either way.) For example, if you try to create
-a Pokemon with a pre-existing number, the form should show "Number: '1' is
-already in use" under the Number field. Or if you send a blank move, it should
-report "Moves: can't be blank" under the Moves fields.
+format. Just remember that the frontend will likely want to relay the error
+message to the user, so you want them to be informative. Try to make it easy for
+the frontend to render an error message like "Number: '1' is already in use" or
+"Moves: can't be blank".
 
-Look at the frontend code to figure out the expected format for your errors.
-Things to consider as you try to match that format include:
+Things to consider:
 
 * Should you use `errors.messages` or `errors.full_messages`? (What is the
   difference?)
 * Should you use `new`/`save`, or `create`, or the `!` versions of those
-  methods? (Again, what is the difference?)
+  methods? (Again, what are the differences?)
 * How will you handle error keys that do not correspond exactly to the keys
   expected by the frontend?
 
@@ -554,10 +519,8 @@ investigated how Rails handles parameters, and experienced some of the
 challenges that arise when trying to make your code interface with a
 pre-existing app. This enabled you to refresh your Ruby/Rails skills while also
 practicing new syntactic sugar and patterns like Jbuilder that will serve you
-well in your full stack project.
+well in your upcoming Full Stack Project.
 
-[`localhost:3000`]: http://localhost:3000
-[express-backend]: https://github.com/appacademy/practice-for-week-15-pokedex-express-backend
 [namespaces]: https://guides.rubyonrails.org/routing.html#controller-namespaces-and-routing
 [nested-routes]: https://guides.rubyonrails.org/routing.html#nested-resources
 [shallow-nesting]: https://guides.rubyonrails.org/routing.html#shallow-nesting

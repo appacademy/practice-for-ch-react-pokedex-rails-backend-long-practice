@@ -1,9 +1,12 @@
-# Pokedex, Part 2: The Backend
+# Pokedex, Part 1: Backend
 
-In today's project, you will create a lean Rails backend for the Pokedex
-frontend that you created yesterday. Along the way, you will learn some new
-syntactic sugar, investigate how Rails handles parameters, and practice building
-Jbuilder templates.
+In today's project, you will create a lean Rails backend API for Pokedex,
+basically, a database of Pokemon. Along the way, you will
+learn some new syntactic sugar, investigate how Rails handles parameters, and
+practice building Jbuilder templates.
+
+(In Pokedex, Part 2--which you will do on another day--you will build a
+corresponding frontend to access your API.)
 
 ## Phase 1 - Create a new Rails project and set up the database
 
@@ -19,8 +22,7 @@ nested repos!--you can omit the `-G`. (You can grab appropriate
 __.gitattributes__ and __.gitignore__ files from the repo linked to the
 `Download Project` button at the bottom of this page.)
 
-The `-T` flag tells Rails not to skip setting up its internal `Test::Unit`
-files.
+The `-T` flag tells Rails to skip setting up its internal `Test::Unit` files.
 
 The `--database` (or `-d`) flag tells Rails to use PostgreSQL as the database.
 
@@ -86,11 +88,11 @@ following column names and types:
 * happiness (type: integer)
 * image_url (type: string)
 
-Open the newly created migration file. Go ahead and add `null: false`
-constraints to the `name`, `price`, `happiness`, and `image_url` columns.
-Remember that the `references` type is used to create foreign keys; when you run
-the migration, the `references` type will create a `pokemon_id` column (N.B.:
-**NOT** `pokemon`) and add an index for it.
+Open the newly created migration file. Add `null: false` constraints to the
+`name`, `price`, `happiness`, and `image_url` columns. Remember that the
+`references` type is used to create foreign keys; when you run the migration,
+the `references` type will create a `pokemon_id` column (N.B.: **NOT**
+`pokemon`) and add an index for it.
 
 Recall, too, that the `foreign_key` constraint will prevent your app from
 deleting records needed by other tables. To ensure that deleting a Pokemon will
@@ -131,7 +133,7 @@ create_table :poke_moves do |t|
 end
 ```
 
-(**N.B.**: `poke_moves` requires that both the `pokemons` and the `moves` tables
+(**N.B.:** `poke_moves` requires that both the `pokemons` and the `moves` tables
 already exist in order to create the foreign keys. This migration must
 accordingly run **after** the migrations for those two tables or it will fail.)
 
